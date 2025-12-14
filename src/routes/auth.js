@@ -3,6 +3,116 @@ const User = require('../models/User');
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Đăng ký tài khoản người dùng
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - fullName
+ *               - username
+ *               - email
+ *               - password
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 description: Họ và tên đầy đủ
+ *                 example: Nguyen Van A
+ *               username:
+ *                 type: string
+ *                 description: Tên đăng nhập
+ *                 example: nguyenvana
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Địa chỉ email
+ *                 example: nguyenvana@example.com
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *                 description: Mật khẩu
+ *                 example: password123
+ *     responses:
+ *       201:
+ *         description: Đăng ký thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: User registered successfully
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 60d5ecb74b24c72b8c8b4567
+ *                     fullName:
+ *                       type: string
+ *                       example: Nguyen Van A
+ *                     username:
+ *                       type: string
+ *                       example: nguyenvana
+ *                     email:
+ *                       type: string
+ *                       example: nguyenvana@example.com
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2023-06-25T10:30:00.000Z
+ *       400:
+ *         description: Dữ liệu không hợp lệ
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: All fields are required
+ *       409:
+ *         description: Email hoặc username đã tồn tại
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: User with this email or username already exists
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
+
 // POST /register
 router.post('/register', async (req, res) => {
   try {
