@@ -6,6 +6,7 @@ const swaggerJsdoc = require('swagger-jsdoc');
 require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
+const quizRoutes = require("./routes/quiz");
 
 const app = express();
 app.use(cors());
@@ -36,6 +37,7 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/api/auth", authRoutes);
+app.use("/api/quiz", quizRoutes);
 
 app.get("/", (req, res) => res.json({ ok: true, message: "Hello Node + MongoDB" }));
 
