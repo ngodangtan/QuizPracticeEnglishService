@@ -62,7 +62,22 @@ router.post('/generate-quiz', async (req, res) => {
   }
 
   try {
-    const prompt = `Generate 20 English quiz questions for level ${level}. Each question should be multiple choice with 4 options A, B, C, D, and only one correct answer. Return as JSON array of objects with fields: question, Choice (object with A,B,C,D), Correct (the letter A, B, C, or D). Ensure the response is valid JSON.`;
+    const prompt = `Generate 20 high-quality English quiz questions for CEFR level ${level}. Focus on vocabulary, grammar, and tenses appropriate for this level. Each question should test specific language skills and be multiple choice with 4 options A, B, C, D, and only one correct answer.
+
+Level guidelines:
+- A1: Basic vocabulary, simple present tense, basic grammar
+- A2: Common vocabulary, present/past tenses, basic grammar structures
+- B1: Intermediate vocabulary, various tenses, common grammar patterns
+- B2: Advanced vocabulary, complex tenses, nuanced grammar
+- C1: Sophisticated vocabulary, all tenses, complex grammar
+- C2: Native-like vocabulary, advanced tenses, intricate grammar
+
+Include a mix of:
+- Vocabulary questions (word meaning, synonyms, antonyms, collocations)
+- Grammar questions (sentence structure, word order, agreement)
+- Tense questions (present, past, future, perfect tenses, conditionals)
+
+Each question should be clear, unambiguous, and have one definitively correct answer. Return as JSON array of objects with fields: question, Choice (object with A,B,C,D), Correct (the letter A, B, C, or D). Ensure the response is valid JSON without any additional text.`;
 
     const response = await axios.post('http://127.0.0.1:1234/v1/chat/completions', {
       model: 'local-model', // Adjust based on your LM Studio model
