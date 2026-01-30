@@ -36,6 +36,12 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 // Swagger UI route
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// Serve raw OpenAPI JSON for tooling / CI
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/quiz", quizRoutes);
 
