@@ -314,15 +314,12 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create new user
+    // Create new user (password will be hashed in User pre-save hook)
     const user = new User({
       fullName: fullName.trim(),
       username: username.trim().toLowerCase(),
       email: email.trim().toLowerCase(),
-      password: hashedPassword
+      password: password
     });
 
     await user.save();

@@ -70,6 +70,12 @@ userSchema.pre('save', async function() {
     return;
   }
 
+  // If password already looks like a bcrypt hash, skip hashing to avoid double-hash
+  if (typeof this.password === 'string' && this.password.startsWith('$2')) {
+    console.log('Password already hashed, skipping hash');
+    return;
+  }
+
   console.log('Hashing password...');
   try {
     const salt = await bcrypt.genSalt(10);
