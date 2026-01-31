@@ -22,6 +22,10 @@
  *         password:
  *           type: string
  *           description: Hashed password (not returned in responses)
+ *         recentScore:
+ *           type: string
+ *           description: Recent test score as percentage string (e.g., "30%")
+ *           example: "30%"
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -57,6 +61,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 6
+  },
+  recentScore: {
+    type: String,
+    // Accept values like "0%" ... "100%"
+    match: [/^(100|[0-9]{1,2})%$/, 'Please enter a valid percent (e.g., 30%)']
   }
 }, {
   timestamps: true
