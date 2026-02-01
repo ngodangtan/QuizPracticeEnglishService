@@ -172,6 +172,10 @@ const router = express.Router();
  *                     email:
  *                       type: string
  *                       example: nguyenvana@example.com
+ *                     recentScore:
+ *                       type: string
+ *                       description: Recent test score as percentage string (e.g., "30%")
+ *                       example: "30%"
  *       400:
  *         description: Dữ liệu không hợp lệ
  *         content:
@@ -270,7 +274,8 @@ router.post('/login', async (req, res) => {
       _id: user._id,
       fullName: user.fullName,
       username: user.username,
-      email: user.email
+      email: user.email,
+      recentScore: user.recentScore || null
     };
 
     res.status(200).json({
@@ -487,3 +492,4 @@ router.put('/change-password', authMiddleware, async (req, res) => {
 });
 
 module.exports = router;
+module.exports.authMiddleware = authMiddleware;

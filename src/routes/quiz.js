@@ -1,5 +1,7 @@
 const express = require('express');
 const axios = require('axios');
+const User = require('../models/User');
+const { authMiddleware } = require('./auth');
 
 const router = express.Router();
 
@@ -98,6 +100,71 @@ Each question should be clear, unambiguous, and have one definitively correct an
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to generate quiz' });
+  }
+});
+
+/**
+ * @swagger
+ * /api/quiz/submit-score:
+ *   post:
+ *     summary: Lưu điểm recentScore khi user hoàn thành bài test
+ *     tags: [Quiz]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - score
+ *             properties:
+ *               score:
+ *                 type: string
+ *                 description: Score as percentage string or number (e.g., "30%" or 30)
+ *                 example: "30%"
+ *     responses:
+ *       200:
+ *         description: Score saved
+ *       400:
+ *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Server error
+ */
+router.post('/submit-score', authMiddleware, async (req, res) => {
+  try {
+    const { score } = req.body;
+    let scoreStr;
+
+    if (typeof score === 'number') {
+      scoreStr = `${Math.round(score)}%`;
+    } else if (typeof score === 'string') {
+      const s = score.trim();
+      if (/^\d+%$/.test(s)) scoreStr = s;
+      else if (/^\d+(\.\d+)?$/.test(s)) scoreStr = `${Math.round(Number(s))}%`;
+      else return res.status(400).json({ error: 'Invalid score format. Use "30%" or number like 30' });
+    } else {
+      return res.status(400).json({ error: 'Score is required' });
+    }
+
+    if (!/^(100|[0-9]{1,2})%$/.test(scoreStr)) {
+      return res.status(400).json({ error: 'Score must be between 0% and 100%' });
+    }
+
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    user.recentScore = scoreStr;
+    await user.save();
+
+    res.json({ success: true, recentScore: user.recentScore });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to save score' });
   }
 });
 
